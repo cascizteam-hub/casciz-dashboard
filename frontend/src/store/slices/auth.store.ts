@@ -2,8 +2,6 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import type { UserProfile } from '@/types'
 
-// ── State shape ───────────────────────────────────────────────────────────
-
 interface AuthState {
   user:          UserProfile | null
   isLoading:     boolean
@@ -15,8 +13,6 @@ interface AuthState {
   clearAuth:      () => void
 }
 
-// ── Store ─────────────────────────────────────────────────────────────────
-
 export const useAuthStore = create<AuthState>()(
   devtools(
     (set) => ({
@@ -24,14 +20,10 @@ export const useAuthStore = create<AuthState>()(
       isLoading:     false,
       isInitialized: false,
 
-      setUser: (user) => set({ user }, false, 'setUser'),
-
-      setLoading: (isLoading) => set({ isLoading }, false, 'setLoading'),
-
-      setInitialized: (isInitialized) => set({ isInitialized }, false, 'setInitialized'),
-
-      clearAuth: () =>
-        set({ user: null, isLoading: false }, false, 'clearAuth'),
+      setUser:        (user)          => set({ user }),
+      setLoading:     (isLoading)     => set({ isLoading }),
+      setInitialized: (isInitialized) => set({ isInitialized }),
+      clearAuth:      ()              => set({ user: null, isLoading: false }),
     }),
     { name: 'AuthStore' },
   ),

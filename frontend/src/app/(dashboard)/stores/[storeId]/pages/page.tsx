@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ChevronLeft, Plus, Pencil, Trash2, Globe, FileText, ExternalLink } from 'lucide-react'
+import { ChevronLeft, Plus, Pencil, Trash2, Globe, FileText } from 'lucide-react'
 import { pageApi } from '@/lib/api/page.api'
 import { getErrorMessage } from '@/lib/utils'
 import ConfirmDialog from '@/components/shared/ConfirmDialog'

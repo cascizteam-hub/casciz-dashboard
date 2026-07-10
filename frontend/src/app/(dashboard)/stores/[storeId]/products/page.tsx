@@ -8,7 +8,6 @@ import ProductCard from '@/components/products/ProductCard'
 import { ProductCardSkeleton } from '@/components/shared/Skeletons'
 import EmptyState from '@/components/shared/EmptyState'
 import ConfirmDialog from '@/components/shared/ConfirmDialog'
-import type { ProductStatus } from '@/types'
 
 interface Props { params: Promise<{ storeId: string }> }
 

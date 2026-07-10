@@ -317,7 +317,7 @@ export default function OrderDetailPage({ params }: Props) {
           {order.customerNotes && (
             <div className="card p-5">
               <h2 className="text-sm font-semibold text-surface-900 mb-2">Customer notes</h2>
-              <p className="text-sm text-surface-700 italic">"{order.customerNotes}"</p>
+              <p className="text-sm text-surface-700 italic">&ldquo;{order.customerNotes}&rdquo;</p>
             </div>
           )}
         </div>

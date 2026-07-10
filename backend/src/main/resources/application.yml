@@ -80,6 +80,17 @@ spring:
     default-property-inclusion: non_null
     time-zone: UTC
 
+  # ── Task scheduling / execution ──────────────────────────────────────────
+  task:
+    scheduling:
+      pool:
+        size: 2
+    execution:
+      pool:
+        core-size: 4
+        max-size: 8
+        queue-capacity: 100
+
 # ── Server ─────────────────────────────────────────────────────────────────
 server:
   port: ${SERVER_PORT:8080}
@@ -136,14 +147,3 @@ casciz:
     local-path: /app/uploads
   encryption:
     secret: ${CASCIZ_ENCRYPTION_SECRET:default-change-in-production-32ch}
-
-spring:
-  task:
-    scheduling:
-      pool:
-        size: 2
-    execution:
-      pool:
-        core-size: 4
-        max-size: 8
-        queue-capacity: 100

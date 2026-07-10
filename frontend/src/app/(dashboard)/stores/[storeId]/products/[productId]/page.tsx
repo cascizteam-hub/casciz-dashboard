@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   ChevronLeft, Rocket, Archive, Package, Trash2, Loader2,
-  TrendingUp, TrendingDown, Save,
+  TrendingUp, Save,
 } from 'lucide-react'
 import { useProducts } from '@/hooks/useProducts'
 import ProductStatusBadge from '@/components/products/ProductStatusBadge'

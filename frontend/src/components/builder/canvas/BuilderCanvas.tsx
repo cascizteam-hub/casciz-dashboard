@@ -48,7 +48,7 @@ function DropZone({ index, isDraggingOver, onDragOver, onDragLeave, onDrop }: Dr
 }
 
 export default function BuilderCanvas({
-  blocks, selectedBlockId, isDragging,
+  blocks, selectedBlockId,
   onSelectBlock, onMoveBlock, onDuplicateBlock, onRemoveBlock,
   onSetDragging, onOpenInspector, onDropNewBlock,
 }: Props) {

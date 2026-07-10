@@ -10,7 +10,6 @@ import type {
   CheckoutStatus,
   ConfirmPaymentRequest,
   InitiatePaymentRequest,
-  PaymentProvider,
   SavePaymentSettingsRequest,
   UpdateCustomerRequest,
   UpdateItemRequest,

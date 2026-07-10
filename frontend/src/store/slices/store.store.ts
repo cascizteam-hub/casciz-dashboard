@@ -32,25 +32,25 @@ export const useStoreListStore = create<StoreState>()(
       isSubmitting:  false,
 
       setStores: (stores, total) =>
-        set({ stores, totalElements: total }, false, 'setStores'),
+        set({ stores, totalElements: total }),
 
       setSelectedStore: (store) =>
-        set({ selectedStore: store }, false, 'setSelectedStore'),
+        set({ selectedStore: store }),
 
       setCurrentPage: (page) =>
-        set({ currentPage: page }, false, 'setCurrentPage'),
+        set({ currentPage: page }),
 
       setLoading: (isLoading) =>
-        set({ isLoading }, false, 'setLoading'),
+        set({ isLoading }),
 
       setSubmitting: (isSubmitting) =>
-        set({ isSubmitting }, false, 'setSubmitting'),
+        set({ isSubmitting }),
 
       addStore: (store) =>
         set((state) => ({
           stores:        [store, ...state.stores],
           totalElements: state.totalElements + 1,
-        }), false, 'addStore'),
+        })),
 
       updateStore: (updated) =>
         set((state) => ({
@@ -70,7 +70,7 @@ export const useStoreListStore = create<StoreState>()(
           ),
           selectedStore:
             state.selectedStore?.id === updated.id ? updated : state.selectedStore,
-        }), false, 'updateStore'),
+        })),
 
       removeStore: (storeId) =>
         set((state) => ({
@@ -78,13 +78,13 @@ export const useStoreListStore = create<StoreState>()(
           totalElements: Math.max(0, state.totalElements - 1),
           selectedStore:
             state.selectedStore?.id === storeId ? null : state.selectedStore,
-        }), false, 'removeStore'),
+        })),
 
       reset: () =>
         set({
           stores: [], selectedStore: null, totalElements: 0,
           currentPage: 0, isLoading: false, isSubmitting: false,
-        }, false, 'reset'),
+        }),
     }),
     { name: 'StoreListStore' },
   ),

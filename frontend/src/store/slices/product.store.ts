@@ -37,28 +37,28 @@ export const useProductStore = create<ProductState>()(
       isSubmitting:    false,
 
       setProducts: (products, total) =>
-        set({ products, totalElements: total }, false, 'setProducts'),
+        set({ products, totalElements: total }),
 
       setSelectedProduct: (product) =>
-        set({ selectedProduct: product }, false, 'setSelectedProduct'),
+        set({ selectedProduct: product }),
 
       setCategories: (categories) =>
-        set({ categories }, false, 'setCategories'),
+        set({ categories }),
 
       setCurrentPage: (page) =>
-        set({ currentPage: page }, false, 'setCurrentPage'),
+        set({ currentPage: page }),
 
       setLoading: (isLoading) =>
-        set({ isLoading }, false, 'setLoading'),
+        set({ isLoading }),
 
       setSubmitting: (isSubmitting) =>
-        set({ isSubmitting }, false, 'setSubmitting'),
+        set({ isSubmitting }),
 
       addProduct: (product) =>
         set((state) => ({
           products:      [product, ...state.products],
           totalElements: state.totalElements + 1,
-        }), false, 'addProduct'),
+        })),
 
       updateProduct: (updated) =>
         set((state) => ({
@@ -81,7 +81,7 @@ export const useProductStore = create<ProductState>()(
           ),
           selectedProduct:
             state.selectedProduct?.id === updated.id ? updated : state.selectedProduct,
-        }), false, 'updateProduct'),
+        })),
 
       removeProduct: (productId) =>
         set((state) => ({
@@ -89,21 +89,20 @@ export const useProductStore = create<ProductState>()(
           totalElements:   Math.max(0, state.totalElements - 1),
           selectedProduct: state.selectedProduct?.id === productId
             ? null : state.selectedProduct,
-        }), false, 'removeProduct'),
+        })),
 
       addCategory: (category) =>
-        set((state) => ({ categories: [...state.categories, category] }),
-          false, 'addCategory'),
+        set((state) => ({ categories: [...state.categories, category] })),
 
       updateCategory: (updated) =>
         set((state) => ({
           categories: state.categories.map((c) => c.id === updated.id ? updated : c),
-        }), false, 'updateCategory'),
+        })),
 
       removeCategory: (categoryId) =>
         set((state) => ({
           categories: state.categories.filter((c) => c.id !== categoryId),
-        }), false, 'removeCategory'),
+        })),
     }),
     { name: 'ProductStore' },
   ),

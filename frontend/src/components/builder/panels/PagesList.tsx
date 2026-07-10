@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Plus, FileText, Globe, File } from 'lucide-react'
+import { Plus, FileText, Globe } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { PageSummary } from '@/types/builder'
 

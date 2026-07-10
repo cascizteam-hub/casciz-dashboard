@@ -1,7 +1,18 @@
 'use client'
 
 import { X } from 'lucide-react'
-import type { BuilderBlock } from '@/types/builder'
+import type {
+  BuilderBlock,
+  HeroProps,
+  TextProps,
+  ImageProps,
+  BannerProps,
+  TestimonialProps,
+  CtaProps,
+  DividerProps,
+  SpacerProps,
+  VideoProps,
+} from '@/types/builder'
 
 interface Props {
   block:        BuilderBlock
@@ -120,7 +131,7 @@ function ColorField({
 // ── Block-specific inspector panels ──────────────────────────────────────
 
 function HeroInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (p: object) => void }) {
-  const p = block.props as import('@/types/builder').HeroProps
+  const p = block.props as HeroProps
   return (
     <div className="space-y-4">
       <TextField label="Heading"    value={p.heading}    onChange={(v) => onUpdate({ heading: v })} />
@@ -140,7 +151,7 @@ function HeroInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (p:
 }
 
 function TextInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (p: object) => void }) {
-  const p = block.props as import('@/types/builder').TextProps
+  const p = block.props as TextProps
   return (
     <div className="space-y-4">
       <TextField label="Body (markdown supported)" value={p.body} onChange={(v) => onUpdate({ body: v })} multiline placeholder="Enter text…" />
@@ -155,7 +166,7 @@ function TextInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (p:
 }
 
 function ImageInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (p: object) => void }) {
-  const p = block.props as import('@/types/builder').ImageProps
+  const p = block.props as ImageProps
   return (
     <div className="space-y-4">
       <TextField label="Image URL" value={p.src}     onChange={(v) => onUpdate({ src: v })} />
@@ -179,7 +190,7 @@ function ImageInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (p
 }
 
 function BannerInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (p: object) => void }) {
-  const p = block.props as import('@/types/builder').BannerProps
+  const p = block.props as BannerProps
   return (
     <div className="space-y-4">
       <TextField label="Text"      value={p.text}     onChange={(v) => onUpdate({ text: v })} />
@@ -198,7 +209,7 @@ function BannerInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (
 }
 
 function TestimonialInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (p: object) => void }) {
-  const p = block.props as import('@/types/builder').TestimonialProps
+  const p = block.props as TestimonialProps
   return (
     <div className="space-y-4">
       <TextField label="Quote"      value={p.quote}     onChange={(v) => onUpdate({ quote: v })} multiline />
@@ -213,7 +224,7 @@ function TestimonialInspector({ block, onUpdate }: { block: BuilderBlock; onUpda
 }
 
 function CtaInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (p: object) => void }) {
-  const p = block.props as import('@/types/builder').CtaProps
+  const p = block.props as CtaProps
   return (
     <div className="space-y-4">
       <TextField label="Heading"        value={p.heading}       onChange={(v) => onUpdate({ heading: v })} />
@@ -228,7 +239,7 @@ function CtaInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (p: 
 }
 
 function DividerInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (p: object) => void }) {
-  const p = block.props as import('@/types/builder').DividerProps
+  const p = block.props as DividerProps
   return (
     <div className="space-y-4">
       <SelectField label="Style" value={p.style}
@@ -240,7 +251,7 @@ function DividerInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: 
 }
 
 function SpacerInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (p: object) => void }) {
-  const p = block.props as import('@/types/builder').SpacerProps
+  const p = block.props as SpacerProps
   return (
     <SelectField label="Height" value={p.height}
       options={[
@@ -255,7 +266,7 @@ function SpacerInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (
 }
 
 function VideoInspector({ block, onUpdate }: { block: BuilderBlock; onUpdate: (p: object) => void }) {
-  const p = block.props as import('@/types/builder').VideoProps
+  const p = block.props as VideoProps
   return (
     <div className="space-y-4">
       <TextField label="Embed URL (YouTube/Vimeo)" value={p.url}     onChange={(v) => onUpdate({ url: v })} />

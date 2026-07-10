@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -46,6 +47,7 @@ class CheckoutServiceTest {
     @Mock PaymentTransactionRepository  transactionRepository;
     @Mock StorePaymentSettingsRepository paymentSettingsRepository;
     @Mock PaymentGatewayRegistry        gatewayRegistry;
+    @Mock ApplicationEventPublisher     eventPublisher;
 
     CheckoutMapper  mapper  = new CheckoutMapper();
     CheckoutService service;
@@ -62,7 +64,7 @@ class CheckoutServiceTest {
         service = new CheckoutService(
                 checkoutRepository, storeRepository, productRepository,
                 variantRepository, transactionRepository, paymentSettingsRepository,
-                gatewayRegistry, mapper);
+                gatewayRegistry, mapper, eventPublisher);
 
         mockStore = Store.builder()
                 .id(storeId).name("Test Store").slug("test-store")

@@ -10,7 +10,7 @@ import type { StoreSummary, StoreStatus } from '@/types'
 interface Props {
   store:          StoreSummary
   onChangeStatus: (storeId: string, status: StoreStatus) => Promise<void>
-  onDelete:       (storeId: string) => Promise<void>
+  onDelete:       (storeId: string) => void | Promise<void>
 }
 
 const CURRENCY_SYMBOLS: Record<string, string> = {

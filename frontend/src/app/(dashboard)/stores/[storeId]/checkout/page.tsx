@@ -9,7 +9,8 @@ import CheckoutSummaryCard from '@/components/checkout/CheckoutSummaryCard'
 import PaymentSettingsForm from '@/components/checkout/PaymentSettingsForm'
 import EmptyState from '@/components/shared/EmptyState'
 import { Skeleton } from '@/components/shared/Skeletons'
-import type { CheckoutStatus, PaymentProvider, PaymentSettingsFormValues } from '@/types'
+import type { CheckoutStatus, PaymentProvider } from '@/types'
+import type { PaymentSettingsFormValues } from '@/lib/validators/checkout.schemas'
 
 interface Props { params: Promise<{ storeId: string }> }
 

@@ -29,19 +29,19 @@ export const useOrderStore = create<OrderState>()(
       isSubmitting:  false,
 
       setOrders: (orders, total) =>
-        set({ orders, totalElements: total }, false, 'setOrders'),
+        set({ orders, totalElements: total }),
 
       setSelectedOrder: (order) =>
-        set({ selectedOrder: order }, false, 'setSelectedOrder'),
+        set({ selectedOrder: order }),
 
       setCurrentPage: (page) =>
-        set({ currentPage: page }, false, 'setCurrentPage'),
+        set({ currentPage: page }),
 
       setLoading: (isLoading) =>
-        set({ isLoading }, false, 'setLoading'),
+        set({ isLoading }),
 
       setSubmitting: (isSubmitting) =>
-        set({ isSubmitting }, false, 'setSubmitting'),
+        set({ isSubmitting }),
 
       updateOrder: (updated) =>
         set((state) => ({
@@ -62,7 +62,7 @@ export const useOrderStore = create<OrderState>()(
           ),
           selectedOrder:
             state.selectedOrder?.id === updated.id ? updated : state.selectedOrder,
-        }), false, 'updateOrder'),
+        })),
     }),
     { name: 'OrderStore' },
   ),

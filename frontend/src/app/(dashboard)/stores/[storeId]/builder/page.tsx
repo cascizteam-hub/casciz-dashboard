@@ -4,7 +4,6 @@ import { use, useEffect, useState, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Plus } from 'lucide-react'
 import { useBuilder } from '@/hooks/useBuilder'
-import { useStores } from '@/hooks/useStores'
 import { pageApi } from '@/lib/api/page.api'
 import BuilderTopBar from '@/components/builder/panels/BuilderTopBar'
 import BlockPicker from '@/components/builder/panels/BlockPicker'
@@ -12,8 +11,7 @@ import BlockInspector from '@/components/builder/panels/BlockInspector'
 import PagesList from '@/components/builder/panels/PagesList'
 import BuilderCanvas from '@/components/builder/canvas/BuilderCanvas'
 import BlockRenderer from '@/components/builder/blocks/BlockRenderer'
-import { createBlock } from '@/lib/builder/block-registry'
-import type { BlockType, PageSummary, PageType } from '@/types/builder'
+import type { BlockType, PageSummary } from '@/types/builder'
 import { cn } from '@/lib/utils'
 
 interface Props {
@@ -32,8 +30,6 @@ function BuilderPageInner({ params }: Props) {
   const [pageStatus, setPageStatus] = useState<'DRAFT' | 'PUBLISHED'>('DRAFT')
   const [leftPanel,  setLeftPanel]  = useState<LeftPanel>('blocks')
   const [inspecting, setInspecting] = useState(false)
-
-  const { fetchStore } = useStores()
 
   const {
     blocks, selectedBlockId, saveState, isPreviewMode,
@@ -62,10 +58,8 @@ function BuilderPageInner({ params }: Props) {
     addBlock(type)
   }, [addBlock])
 
-  const handleDropNewBlock = useCallback((type: BlockType, atIndex: number) => {
-    const block = createBlock(type, atIndex)
-    // insertBlockAt delegates to the store
-    addBlock(block)
+  const handleDropNewBlock = useCallback((type: BlockType) => {
+    addBlock(type)
   }, [addBlock])
 
   const handleOpenInspector = useCallback((id: string) => {

@@ -1,10 +1,3 @@
-version: "3.9"
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Casciz Commerce OS – Docker Compose
-# Services: postgres, redis, backend (Spring Boot), frontend (Next.js), nginx
-# ─────────────────────────────────────────────────────────────────────────────
-
 networks:
   casciz-internal:
     driver: bridge
@@ -19,15 +12,14 @@ volumes:
 
 services:
 
-  # ── PostgreSQL 16 ─────────────────────────────────────────────────────────
   postgres:
     image: postgres:16-alpine
     container_name: casciz-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-casciz_commerce}
+      POSTGRES_USER: ${POSTGRES_USER:-casciz_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpassword123}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres-data:/var/lib/postgresql/data
@@ -37,24 +29,21 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-casciz_user} -d ${POSTGRES_DB:-casciz_commerce}"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 20s
 
-  # ── Redis 7 ───────────────────────────────────────────────────────────────
   redis:
     image: redis:7-alpine
     container_name: casciz-redis
     restart: unless-stopped
     command: >
       redis-server
-      --requirepass ${REDIS_PASSWORD}
+      --requirepass ${REDIS_PASSWORD:-devredis123}
       --maxmemory 256mb
       --maxmemory-policy allkeys-lru
-      --save 60 1
-      --loglevel warning
     volumes:
       - redis-data:/data
     networks:
@@ -62,12 +51,11 @@ services:
     ports:
       - "6379:6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-devredis123}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # ── Backend – Spring Boot ─────────────────────────────────────────────────
   backend:
     build:
       context: ./backend
@@ -81,23 +69,24 @@ services:
       redis:
         condition: service_healthy
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-production}
-      SPRING_DATASOURCE_URL: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      SPRING_REDIS_HOST: ${REDIS_HOST}
-      SPRING_REDIS_PORT: ${REDIS_PORT}
-      SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_ACCESS_TOKEN_EXPIRY_MS: ${JWT_ACCESS_TOKEN_EXPIRY_MS}
-      JWT_REFRESH_TOKEN_EXPIRY_MS: ${JWT_REFRESH_TOKEN_EXPIRY_MS}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
-      SERVER_PORT: ${SERVER_PORT:-8080}
-      MAIL_HOST: ${MAIL_HOST}
-      MAIL_PORT: ${MAIL_PORT}
-      MAIL_USERNAME: ${MAIL_USERNAME}
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_NAME: ${MAIL_FROM_NAME}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-development}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-casciz_commerce}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-casciz_user}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-devpassword123}
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD:-devredis123}
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-that-is-definitely-at-least-64-characters-long-ok}
+      JWT_ACCESS_TOKEN_EXPIRY_MS: ${JWT_ACCESS_TOKEN_EXPIRY_MS:-3600000}
+      JWT_REFRESH_TOKEN_EXPIRY_MS: ${JWT_REFRESH_TOKEN_EXPIRY_MS:-604800000}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://localhost}
+      SERVER_PORT: 8080
+      MAIL_HOST: ${MAIL_HOST:-smtp.mailtrap.io}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-no-reply@casciz.com}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-unused}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Casciz Commerce OS}
+      CASCIZ_ENCRYPTION_SECRET: ${CASCIZ_ENCRYPTION_SECRET:-dev-encryption-secret-32chars!}
     volumes:
       - backend-logs:/app/logs
     networks:
@@ -105,13 +94,12 @@ services:
     expose:
       - "8080"
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 60s
+      start_period: 90s
 
-  # ── Frontend – Next.js ────────────────────────────────────────────────────
   frontend:
     build:
       context: ./frontend
@@ -123,11 +111,12 @@ services:
       backend:
         condition: service_healthy
     environment:
-      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
-      NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME}
-      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
-      NEXTAUTH_URL: ${NEXTAUTH_URL}
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXT_PUBLIC_API_BASE_URL: http://localhost/api/v1
+      NEXT_PUBLIC_APP_NAME: Casciz Commerce OS
+      NEXT_PUBLIC_APP_URL: http://localhost
+      NEXTAUTH_URL: http://localhost
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-dev-nextauth-secret-32-chars-ok}
+      NODE_ENV: production
     volumes:
       - frontend-cache:/app/.next/cache
     networks:
@@ -135,13 +124,12 @@ services:
     expose:
       - "3000"
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 30s
 
-  # ── Nginx – Reverse Proxy ─────────────────────────────────────────────────
   nginx:
     image: nginx:1.25-alpine
     container_name: casciz-nginx
@@ -153,15 +141,9 @@ services:
         condition: service_healthy
     ports:
       - "80:80"
-      - "443:443"
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
     networks:
       - casciz-internal
       - casciz-public
-    healthcheck:
-      test: ["CMD", "nginx", "-t"]
-      interval: 30s
-      timeout: 10s
-      retries: 3

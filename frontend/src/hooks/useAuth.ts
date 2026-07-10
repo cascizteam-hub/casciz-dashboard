@@ -1,21 +1,15 @@
 'use client'
 
 import { useCallback } from 'react'
-import { useRouter } from 'next/navigation'
 import { authApi } from '@/lib/api/auth.api'
 import { userApi } from '@/lib/api/user.api'
 import { clearAuthCookies } from '@/lib/api/client'
 import { getRefreshToken } from '@/lib/auth/token'
 import { getErrorMessage } from '@/lib/utils'
 import { useAuthStore } from '@/store/slices/auth.store'
-import { routes } from '@/config'
 import type { LoginRequest, RegisterRequest } from '@/types'
 
-/**
- * Primary auth hook. All auth interactions in components go through here.
- */
 export function useAuth() {
-  const router    = useRouter()
   const { user, isLoading, isInitialized, setUser, setLoading, clearAuth } = useAuthStore()
 
   const fetchCurrentUser = useCallback(async () => {
@@ -34,12 +28,14 @@ export function useAuth() {
       try {
         await authApi.login(credentials)
         await fetchCurrentUser()
-        router.push(routes.dashboard.overview)
+        if (typeof window !== 'undefined') {
+          window.location.href = '/overview'
+        }
       } finally {
         setLoading(false)
       }
     },
-    [router, setLoading, fetchCurrentUser],
+    [setLoading, fetchCurrentUser],
   )
 
   const register = useCallback(
@@ -59,13 +55,15 @@ export function useAuth() {
     try {
       if (refreshToken) await authApi.logout(refreshToken)
     } catch {
-      // Best-effort logout; clear cookies regardless
+      // best effort
     } finally {
       clearAuth()
       clearAuthCookies()
-      router.push(routes.auth.login)
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login'
+      }
     }
-  }, [router, clearAuth])
+  }, [clearAuth])
 
   return {
     user,

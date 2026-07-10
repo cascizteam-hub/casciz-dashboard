@@ -3,18 +3,14 @@ import Cookies from 'js-cookie'
 import { appConfig, cookieKeys } from '@/config'
 import type { ApiResponse, AuthTokens } from '@/types'
 
-// ── Axios instance ────────────────────────────────────────────────────────
-
 const apiClient = axios.create({
   baseURL: appConfig.apiBaseUrl,
   timeout: 30_000,
   headers: {
     'Content-Type': 'application/json',
-    Accept:         'application/json',
+    Accept: 'application/json',
   },
 })
-
-// ── Request interceptor: attach access token ──────────────────────────────
 
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
@@ -27,13 +23,8 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error),
 )
 
-// ── Response interceptor: silent token refresh ────────────────────────────
-
 let isRefreshing = false
-let failedQueue: Array<{
-  resolve: (token: string) => void
-  reject: (error: unknown) => void
-}> = []
+let failedQueue: Array<{ resolve: (token: string) => void; reject: (error: unknown) => void }> = []
 
 function processQueue(error: unknown, token: string | null) {
   failedQueue.forEach(({ resolve, reject }) => {
@@ -52,7 +43,6 @@ apiClient.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    // Don't try to refresh on auth endpoints themselves
     if (originalRequest.url?.includes('/auth/')) {
       return Promise.reject(error)
     }
@@ -75,7 +65,7 @@ apiClient.interceptors.response.use(
 
     if (!refreshToken) {
       clearAuthCookies()
-      redirectToLogin()
+      if (typeof window !== 'undefined') window.location.href = '/login'
       return Promise.reject(error)
     }
 
@@ -96,7 +86,7 @@ apiClient.interceptors.response.use(
     } catch (refreshError) {
       processQueue(refreshError, null)
       clearAuthCookies()
-      redirectToLogin()
+      if (typeof window !== 'undefined') window.location.href = '/login'
       return Promise.reject(refreshError)
     } finally {
       isRefreshing = false
@@ -104,27 +94,20 @@ apiClient.interceptors.response.use(
   },
 )
 
-// ── Cookie helpers ────────────────────────────────────────────────────────
-
 const COOKIE_OPTIONS = {
-  secure:   process.env.NODE_ENV === 'production',
-  sameSite: 'strict' as const,
+  secure: false, // false for localhost
+  sameSite: 'lax' as const, // lax works better for localhost
+  path: '/',
 }
 
 export function setAuthCookies(accessToken: string, refreshToken: string) {
-  Cookies.set(cookieKeys.accessToken,  accessToken,  { ...COOKIE_OPTIONS, expires: 1 / 96 }) // 15 min
-  Cookies.set(cookieKeys.refreshToken, refreshToken, { ...COOKIE_OPTIONS, expires: 7 })       // 7 days
+  Cookies.set(cookieKeys.accessToken, accessToken, { ...COOKIE_OPTIONS, expires: 1 })
+  Cookies.set(cookieKeys.refreshToken, refreshToken, { ...COOKIE_OPTIONS, expires: 7 })
 }
 
 export function clearAuthCookies() {
-  Cookies.remove(cookieKeys.accessToken)
-  Cookies.remove(cookieKeys.refreshToken)
-}
-
-function redirectToLogin() {
-  if (typeof window !== 'undefined') {
-    window.location.href = '/login'
-  }
+  Cookies.remove(cookieKeys.accessToken, { path: '/' })
+  Cookies.remove(cookieKeys.refreshToken, { path: '/' })
 }
 
 export default apiClient

@@ -124,14 +124,23 @@ casciz-commerce-os/
 
 ### First-time setup
 
+The fastest path — clones aside, this is all you need:
+
+```bash
+bash start.sh
+```
+
+This creates `.env` from `.env.example` if missing (it already ships with
+working dev defaults, no values to fill in) and brings up the full stack.
+See [`HOW-TO-RUN.md`](HOW-TO-RUN.md) for the manual step-by-step version.
+
 ```bash
 # 1. Clone the repository
 git clone https://github.com/your-org/casciz-commerce-os.git
 cd casciz-commerce-os
 
-# 2. Create your environment file
+# 2. Create your environment file (optional — defaults work out of the box)
 cp .env.example .env
-# Edit .env and fill in all CHANGE_ME values
 
 # 3. Start all services
 docker compose up -d
@@ -216,18 +225,10 @@ dependency failed to start: container casciz-backend is unhealthy
 Postgres only reads `POSTGRES_USER` / `POSTGRES_PASSWORD` **the first time** it
 initializes an empty `postgres-data` volume. If the volume already exists from
 an earlier run, changing `POSTGRES_PASSWORD` in `.env` afterwards has no effect
-on the database — it keeps the original password, while the `backend`
-container picks up the new one from the environment and gets rejected.
-
-This happens most often when:
-
-- You edited `POSTGRES_PASSWORD` (or `POSTGRES_USER`/`POSTGRES_DB`) in `.env`
-  after already running `docker compose up` at least once.
-- You never created `.env` (skipped `cp .env.example .env`), so `backend`
-  connects with empty credentials against a volume that was previously
-  initialized with real ones.
-- You're reusing a `postgres-data` volume from a different environment/branch
-  that used different credentials.
+on the database — it keeps the original password, while `backend` picks up the
+new one and gets rejected. This happens most often when you edit
+`POSTGRES_PASSWORD` after already running `docker compose up` once, or when
+you're reusing a `postgres-data` volume from a different `.env`.
 
 **Fix — make the volume match `.env`:**
 
@@ -237,15 +238,28 @@ docker volume rm casciz_postgres-data   # drop the stale volume (destroys local 
 docker compose up -d                    # postgres re-initializes with current .env values
 ```
 
-If you need to keep existing data, instead reset the password inside Postgres
-to match `.env`:
+To keep existing data instead, reset the password inside Postgres to match `.env`:
 
 ```bash
 docker compose exec postgres psql -U postgres -c \
   "ALTER USER casciz_user WITH PASSWORD '<value of POSTGRES_PASSWORD in .env>';"
+docker compose restart backend
 ```
 
-Then restart the backend: `docker compose restart backend`.
+### `next build` / Docker frontend build fails with lint or type errors
+
+Next.js treats ESLint errors and TypeScript errors as build failures during
+`next build` (used by the frontend's production Docker stage), not just
+warnings. If you add new components, run `npm run build` locally in
+`frontend/` before rebuilding the Docker image so you catch these early
+instead of 10 minutes into `docker compose up --build`.
+
+### Backend fails to start with a YAML parsing / duplicate key error
+
+If `backend/src/main/resources/application.yml` ever ends up with two
+top-level `spring:` blocks (e.g. after a manual merge), Spring's YAML loader
+throws `found duplicate key spring` and the app won't start. Keep all
+`spring.*` settings under the single `spring:` block at the top of the file.
 
 ---
 

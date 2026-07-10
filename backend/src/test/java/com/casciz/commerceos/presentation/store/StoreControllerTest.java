@@ -5,6 +5,7 @@ import com.casciz.commerceos.application.store.usecase.StoreService;
 import com.casciz.commerceos.domain.store.valueobject.StoreCurrency;
 import com.casciz.commerceos.domain.store.valueobject.StoreStatus;
 import com.casciz.commerceos.domain.user.entity.User;
+import com.casciz.commerceos.infrastructure.security.jwt.JwtService;
 import com.casciz.commerceos.shared.response.PagedResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +36,7 @@ class StoreControllerTest {
     @Autowired ObjectMapper objectMapper;
 
     @MockBean StoreService storeService;
+    @MockBean JwtService   jwtService;
 
     private static final UUID STORE_ID = UUID.randomUUID();
     private static final UUID OWNER_ID = UUID.randomUUID();
