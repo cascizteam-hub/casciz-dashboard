@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/casciz_commerce}
+    username: ${SPRING_DATASOURCE_USERNAME:casciz_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:devpassword123}
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  flyway:
+    baseline-on-migrate: false
+    out-of-order: false
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: WARN
+    com.casciz: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+
+springdoc:
+  swagger-ui:
+    enabled: true
+
+casciz:
+  jwt:
+    secret: ${JWT_SECRET:dev-jwt-secret-that-is-definitely-at-least-64-characters-long-ok}
+    access-token-expiry-ms: ${JWT_ACCESS_TOKEN_EXPIRY_MS:3600000}
+    refresh-token-expiry-ms: ${JWT_REFRESH_TOKEN_EXPIRY_MS:604800000}

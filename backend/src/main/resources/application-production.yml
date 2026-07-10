@@ -1,0 +1,24 @@
+spring:
+  jpa:
+    show-sql: false
+  flyway:
+    baseline-on-migrate: false
+
+logging:
+  level:
+    root: WARN
+    com.casciz: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: /app/logs/casciz-commerce-os.log
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+      max-history: 30
+
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
