@@ -1,0 +1,44 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Casciz Commerce OS – Development Overrides
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  postgres:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      target: development
+    environment:
+      SPRING_PROFILES_ACTIVE: development
+    volumes:
+      - ./backend/src:/app/src
+      - backend-logs:/app/logs
+    ports:
+      - "8080:8080"
+      - "5005:5005"   # JVM remote debug port
+
+  frontend:
+    build:
+      target: development
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    ports:
+      - "3000:3000"
+    command: npm run dev
+
+  nginx:
+    ports:
+      - "80:80"
