@@ -1,0 +1,24 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+.studio-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.studio-header {
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+.studio-main {
+  padding: 1.5rem;
+}
